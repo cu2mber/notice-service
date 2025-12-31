@@ -58,6 +58,10 @@ public class NoticeServiceImpl implements NoticeService {
             throw new RuntimeException("관리자만 공지사항을 삭제할 수 있습니다.");
         }
 
+        if (!noticeRepository.existsById(noticeNo)) {
+            throw new RuntimeException("해당 공지사항이 존재하지 않습니다.");
+        }
+
         noticeRepository.deleteById(noticeNo);
     }
 

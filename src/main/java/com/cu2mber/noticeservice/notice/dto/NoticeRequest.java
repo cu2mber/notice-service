@@ -27,4 +27,10 @@ public class NoticeRequest {
 
     @Schema(description = "상단 고정 여부 (기본값: false)")
     private Boolean isFixed = false;
+
+    public NoticeRequest(String noticeTitle, String noticeContent, Boolean isFixed){
+        this.noticeTitle=noticeTitle;
+        this.noticeContent=noticeContent;
+        this.isFixed=isFixed;
+    }
 }
