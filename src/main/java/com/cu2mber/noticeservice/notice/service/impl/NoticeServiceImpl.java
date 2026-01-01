@@ -30,7 +30,7 @@ public class NoticeServiceImpl implements NoticeService {
      */
     @Override
     @Transactional
-    public Long createNotice(NoticeRequest request, String role, Long memberNo) {
+    public NoticeResponse createNotice(NoticeRequest request, String role, Long memberNo) {
         if (!"ROLE_ADMIN".equals(role)) {
             throw new RuntimeException("관리자만 공지사항을 등록할 수 있습니다.");
         }
@@ -44,7 +44,9 @@ public class NoticeServiceImpl implements NoticeService {
                 .isFixed(request.getIsFixed())
                 .build();
 
-        return noticeRepository.save(notice).getNoticeNo();
+        Notice savedNotice = noticeRepository.save(notice);
+
+        return NoticeResponse.from(savedNotice);
     }
 
     /**

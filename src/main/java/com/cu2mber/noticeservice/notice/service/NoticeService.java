@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface NoticeService {
     /** 공지사항 신규 등록 */
-    Long createNotice(NoticeRequest request, String role, Long memberNo);
+    NoticeResponse createNotice(NoticeRequest request, String role, Long memberNo);
 
     /** 특정 공지사항 삭제 */
     void deleteNotice(Long noticeNo, String role);

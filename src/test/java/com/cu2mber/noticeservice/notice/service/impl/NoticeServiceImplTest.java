@@ -57,10 +57,10 @@ class NoticeServiceImplTest {
         when(memberRepository.getReferenceById(memberNo)).thenReturn(mockAdmin);
         when(noticeRepository.save(any(Notice.class))).thenReturn(savedNotice);
 
-        Long noticeNo = noticeService.createNotice(request, role, memberNo);
+        NoticeResponse noticeResponse = noticeService.createNotice(request, role, memberNo);
 
-        log.info("테스트 검증 - 결과 NoticeNo: {}", noticeNo);
-        assertEquals(100L, noticeNo);
+        log.info("테스트 검증 - 결과 NoticeNo: {}", noticeResponse);
+        assertEquals(100L, noticeResponse.noticeNo());
         verify(noticeRepository, times(1)).save(any(Notice.class));
     }
 
@@ -68,7 +68,7 @@ class NoticeServiceImplTest {
     @DisplayName("관리자가 아닌 사용자가 등록을 시도하면 예외 발생")
     void createNotice_Fail_Role() {
         NoticeRequest request = new NoticeRequest("제목", "내용", true);
-        String role = "ROLE_USER"; // 권한이 없는 경우
+        String role = "ROLE_USER";
         Long memberNo = 1L;
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
