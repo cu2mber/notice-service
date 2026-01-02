@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,25 @@ public class NoticeServiceImpl implements NoticeService {
         return NoticeResponse.from(savedNotice);
     }
 
+    @Override
+    @Transactional
+    public NoticeResponse updateNotice(Long noticeNo, NoticeRequest request, String role) {
+        if (!"ROLE_ADMIN".equals(role)) {
+            throw new RuntimeException("관리자만 공지사항을 수정할 수 있습니다.");
+        }
+
+        Notice notice = noticeRepository.findById(noticeNo)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 공지사항입니다."));
+
+        notice.update(
+                request.getNoticeTitle(),
+                request.getNoticeContent(),
+                request.getIsFixed()
+        );
+
+        return NoticeResponse.from(notice);
+    }
+
     /**
      * 관리자 권한 확인 후 공지사항 삭제
      * @throws RuntimeException ROLE_ADMIN이 아닐 경우 발생
@@ -65,6 +85,16 @@ public class NoticeServiceImpl implements NoticeService {
         }
 
         noticeRepository.deleteById(noticeNo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NoticeResponse getNotice(Long noticeNo) {
+
+        Notice notice = noticeRepository.findById(noticeNo)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 공지사항입니다."));
+
+        return NoticeResponse.from(notice);
     }
 
     /**

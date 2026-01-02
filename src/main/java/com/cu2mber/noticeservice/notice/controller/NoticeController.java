@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/notices")
 @RequiredArgsConstructor
@@ -25,7 +28,26 @@ public class NoticeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(notice);
     }
 
+    @DeleteMapping("/{notice-no}")
+    public ResponseEntity<Void> deleteNotice(@PathVariable("notice-no") Long noticeNo,
+                                             @RequestHeader("X-Role") String role){
+        noticeService.deleteNotice(noticeNo, role);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{notice-no}")
+    public ResponseEntity<NoticeResponse> getNotice(@PathVariable("notice-no") Long noticeNo) {
+        NoticeResponse response = noticeService.getNotice(noticeNo);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NoticeResponse>> getAllNotices(){
+        List<NoticeResponse> noticeResponseList = noticeService.getAllNotices();
+
+        return ResponseEntity.ok(noticeResponseList);
+    }
 
 
 }

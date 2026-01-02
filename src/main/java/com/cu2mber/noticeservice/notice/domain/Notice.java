@@ -45,4 +45,10 @@ public class Notice {
         this.isFixed = (isFixed != null) ? isFixed : false;
     }
 
+    public void update(String title, String content, Boolean isFixed) {
+        if (title != null) this.noticeTitle = title;
+        if (content != null) this.noticeContent = content;
+        if (isFixed != null) this.isFixed = isFixed;
+    }
+
 }
