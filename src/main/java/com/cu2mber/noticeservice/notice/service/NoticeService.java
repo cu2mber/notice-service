@@ -1,6 +1,5 @@
 package com.cu2mber.noticeservice.notice.service;
 
-import com.cu2mber.noticeservice.member.domain.Member;
 import com.cu2mber.noticeservice.notice.dto.NoticeRequest;
 import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
 

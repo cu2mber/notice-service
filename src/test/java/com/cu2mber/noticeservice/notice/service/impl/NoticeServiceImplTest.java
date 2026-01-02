@@ -1,7 +1,5 @@
 package com.cu2mber.noticeservice.notice.service.impl;
 
-import com.cu2mber.noticeservice.member.domain.Member;
-import com.cu2mber.noticeservice.member.repository.MemberRepository;
 import com.cu2mber.noticeservice.notice.domain.Notice;
 import com.cu2mber.noticeservice.notice.dto.NoticeRequest;
 import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
@@ -17,6 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,9 +32,6 @@ class NoticeServiceImplTest {
     @Mock
     NoticeRepository noticeRepository;
 
-    @Mock
-    MemberRepository memberRepository;
-
     @InjectMocks
     NoticeServiceImpl noticeService;
 
@@ -45,7 +41,6 @@ class NoticeServiceImplTest {
         NoticeRequest request = new NoticeRequest("제목", "내용", true);
         String role = "ROLE_ADMIN";
         Long memberNo = 1L;
-        Member mockAdmin = mock(Member.class);
 
         Notice savedNotice = Notice.builder()
                 .noticeTitle("제목")
@@ -54,7 +49,6 @@ class NoticeServiceImplTest {
 
         ReflectionTestUtils.setField(savedNotice, "noticeNo", 100L);
 
-        when(memberRepository.getReferenceById(memberNo)).thenReturn(mockAdmin);
         when(noticeRepository.save(any(Notice.class))).thenReturn(savedNotice);
 
         NoticeResponse noticeResponse = noticeService.createNotice(request, role, memberNo);
@@ -76,6 +70,23 @@ class NoticeServiceImplTest {
         });
 
         assertEquals("관리자만 공지사항을 등록할 수 있습니다.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("관리자가 공지사항 내용을 수정하면 성공")
+    void updateNotice_Success() {
+        Long noticeNo = 100L;
+        NoticeRequest updateRequest = new NoticeRequest("수정제목", "수정내용", false);
+        Notice existingNotice = Notice.builder()
+                .noticeTitle("기존제목").noticeContent("기존내용").isFixed(true).build();
+
+        when(noticeRepository.findById(noticeNo)).thenReturn(Optional.of(existingNotice));
+
+        NoticeResponse response = noticeService.updateNotice(noticeNo, updateRequest, "ROLE_ADMIN");
+
+        assertEquals("수정제목", response.noticeTitle());
+        assertEquals("수정내용", response.noticeContent());
+        assertFalse(response.isFixed());
     }
 
     @Test
@@ -112,12 +123,12 @@ class NoticeServiceImplTest {
     @Test
     @DisplayName("전체 공지사항 목록 조회 - 고정글 및 생성일 순 정렬 확인")
     void getAllNotices_Success() {
-        Member mockAdmin = mock(Member.class);
+        Long memberNo = 1L;
 
         Notice notice1 = Notice.builder()
                 .noticeTitle("공지사항 1")
                 .noticeContent("내용 1")
-                .member(mockAdmin)
+                .memberNo(memberNo)
                 .isFixed(true)
                 .build();
         ReflectionTestUtils.setField(notice1, "noticeNo", 1L);
@@ -125,20 +136,20 @@ class NoticeServiceImplTest {
         Notice notice2 = Notice.builder()
                 .noticeTitle("공지사항 2")
                 .noticeContent("내용 2")
-                .member(mockAdmin)
+                .memberNo(memberNo)
                 .isFixed(false)
                 .build();
         ReflectionTestUtils.setField(notice2, "noticeNo", 2L);
 
         List<Notice> mockList = Arrays.asList(notice1, notice2);
 
-        when(mockAdmin.getMemberName()).thenReturn("관리자");
         when(noticeRepository.findAllByOrderByIsFixedDescCreatedAtDesc()).thenReturn(mockList);
 
         List<NoticeResponse> result = noticeService.getAllNotices();
 
         assertNotNull(result);
         assertEquals(2, result.size());
+        assertEquals("관리자", result.get(0).memberName());
         assertEquals("공지사항 1", result.get(0).noticeTitle());
     }
 

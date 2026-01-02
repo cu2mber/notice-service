@@ -30,7 +30,7 @@ public record NoticeResponse(
                 notice.getNoticeTitle(),
                 notice.getNoticeContent(),
                 notice.isFixed(),
-                notice.getMember().getMemberName(),
+                "관리자",
                 notice.getCreatedAt()
         );
     }

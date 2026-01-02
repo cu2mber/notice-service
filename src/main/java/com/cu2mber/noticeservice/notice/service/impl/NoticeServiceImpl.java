@@ -1,7 +1,5 @@
 package com.cu2mber.noticeservice.notice.service.impl;
 
-import com.cu2mber.noticeservice.member.domain.Member;
-import com.cu2mber.noticeservice.member.repository.MemberRepository;
 import com.cu2mber.noticeservice.notice.domain.Notice;
 import com.cu2mber.noticeservice.notice.dto.NoticeRequest;
 import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +20,6 @@ import java.util.stream.Collectors;
 public class NoticeServiceImpl implements NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 관리자 권한 확인 후 공지사항 등록
@@ -36,10 +32,8 @@ public class NoticeServiceImpl implements NoticeService {
             throw new RuntimeException("관리자만 공지사항을 등록할 수 있습니다.");
         }
 
-        Member admin = memberRepository.getReferenceById(memberNo);
-
         Notice notice = Notice.builder()
-                .member(admin)
+                .memberNo(memberNo)
                 .noticeTitle(request.getNoticeTitle())
                 .noticeContent(request.getNoticeContent())
                 .isFixed(request.getIsFixed())

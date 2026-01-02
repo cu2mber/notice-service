@@ -1,6 +1,5 @@
 package com.cu2mber.noticeservice.notice.domain;
 
-import com.cu2mber.noticeservice.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,9 +18,8 @@ public class Notice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long noticeNo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_no")
-    private Member member;
+    @Column(nullable = false)
+    private Long memberNo;
 
     @Column(length = 255, nullable = false)
     private String noticeTitle;
@@ -38,8 +36,8 @@ public class Notice {
     private boolean isFixed;
 
     @Builder
-    public Notice(Member member, String noticeTitle, String noticeContent, Boolean isFixed) {
-        this.member = member;
+    public Notice(Long memberNo, String noticeTitle, String noticeContent, Boolean isFixed) {
+        this.memberNo = memberNo;
         this.noticeTitle = noticeTitle;
         this.noticeContent = noticeContent;
         this.isFixed = (isFixed != null) ? isFixed : false;
