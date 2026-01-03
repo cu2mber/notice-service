@@ -27,6 +27,16 @@ public class NoticeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(notice);
     }
 
+    @PatchMapping("/{notice-no}")
+    public ResponseEntity<NoticeResponse> updateNotice(@PathVariable("notice-no") Long noticeNo,
+                                                       @Valid @RequestBody NoticeRequest request,
+                                                       @RequestHeader("X-Role") String role){
+        NoticeResponse response = noticeService.updateNotice(noticeNo, request, role);
+
+        return ResponseEntity.ok(response);
+
+    }
+
     @DeleteMapping("/{notice-no}")
     public ResponseEntity<Void> deleteNotice(@PathVariable("notice-no") Long noticeNo,
                                              @RequestHeader("X-Role") String role){

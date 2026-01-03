@@ -1,5 +1,7 @@
 package com.cu2mber.noticeservice.notice.service.impl;
 
+import com.cu2mber.noticeservice.common.exception.custom.AdminForbiddenException;
+import com.cu2mber.noticeservice.common.exception.custom.NoticeNotFoundException;
 import com.cu2mber.noticeservice.notice.domain.Notice;
 import com.cu2mber.noticeservice.notice.dto.NoticeRequest;
 import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
@@ -29,7 +31,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     public NoticeResponse createNotice(NoticeRequest request, String role, Long memberNo) {
         if (!"ROLE_ADMIN".equals(role)) {
-            throw new RuntimeException("관리자만 공지사항을 등록할 수 있습니다.");
+            throw new AdminForbiddenException();
         }
 
         Notice notice = Notice.builder()
@@ -48,11 +50,11 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     public NoticeResponse updateNotice(Long noticeNo, NoticeRequest request, String role) {
         if (!"ROLE_ADMIN".equals(role)) {
-            throw new RuntimeException("관리자만 공지사항을 수정할 수 있습니다.");
+            throw new AdminForbiddenException();
         }
 
         Notice notice = noticeRepository.findById(noticeNo)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 공지사항입니다."));
+                .orElseThrow(() -> new NoticeNotFoundException());
 
         notice.update(
                 request.getNoticeTitle(),
@@ -71,11 +73,11 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     public void deleteNotice(Long noticeNo, String role) {
         if (!"ROLE_ADMIN".equals(role)) {
-            throw new RuntimeException("관리자만 공지사항을 삭제할 수 있습니다.");
+            throw new AdminForbiddenException();
         }
 
         if (!noticeRepository.existsById(noticeNo)) {
-            throw new RuntimeException("해당 공지사항이 존재하지 않습니다.");
+            throw new NoticeNotFoundException();
         }
 
         noticeRepository.deleteById(noticeNo);
@@ -86,7 +88,7 @@ public class NoticeServiceImpl implements NoticeService {
     public NoticeResponse getNotice(Long noticeNo) {
 
         Notice notice = noticeRepository.findById(noticeNo)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 공지사항입니다."));
+                .orElseThrow(() -> new NoticeNotFoundException());
 
         return NoticeResponse.from(notice);
     }
