@@ -71,7 +71,7 @@ class NoticeServiceImplTest {
             noticeService.createNotice(request, role, memberNo);
         });
 
-        assertEquals("관리자만 공지사항을 등록할 수 있습니다.", exception.getMessage());
+        assertEquals("관리자만 접근할 수 있는 권한입니다.", exception.getMessage());
     }
 
     @Test
@@ -119,7 +119,7 @@ class NoticeServiceImplTest {
             noticeService.deleteNotice(noticeNo, role);
         });
 
-        assertEquals("해당 공지사항이 존재하지 않습니다.", exception.getMessage());
+        assertEquals("존재하지 않는 공지사항입니다.", exception.getMessage());
     }
 
     @Test
