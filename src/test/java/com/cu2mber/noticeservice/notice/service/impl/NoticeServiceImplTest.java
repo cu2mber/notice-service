@@ -1,5 +1,6 @@
 package com.cu2mber.noticeservice.notice.service.impl;
 
+import com.cu2mber.noticeservice.common.exception.BusinessException;
 import com.cu2mber.noticeservice.common.exception.custom.AdminForbiddenException;
 import com.cu2mber.noticeservice.common.exception.custom.NoticeNotFoundException;
 import com.cu2mber.noticeservice.notice.domain.Notice;
@@ -70,7 +71,7 @@ class NoticeServiceImplTest {
         String role = "ROLE_USER";
         Long memberNo = 1L;
 
-        RuntimeException exception = assertThrows(AdminForbiddenException.class, () -> {
+        BusinessException exception = assertThrows(AdminForbiddenException.class, () -> {
             noticeService.createNotice(request, role, memberNo);
         });
 
@@ -118,7 +119,7 @@ class NoticeServiceImplTest {
 
         when(noticeRepository.existsById(noticeNo)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(NoticeNotFoundException.class, () -> {
+        BusinessException exception = assertThrows(NoticeNotFoundException.class, () -> {
             noticeService.deleteNotice(noticeNo, role);
         });
 

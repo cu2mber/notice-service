@@ -8,14 +8,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 /**
- * 공지사항 서비스의 전체 컨텍스트 로드 및 통합 테스트를 담당하는 클래스
- * 실제 스프링 빈을 모두 로드하여 서비스와 리포지토리 간의 상호작용을 검증합니다.
+ * 공지사항 서비스 통합 테스트
+ * <p>
+ * {@link SpringBootTest}를 통해 전체 컨텍스트를 로드하며,
+ * {@link Transactional} 어노테이션을 통해 테스트 완료 후 데이터를 자동으로 롤백하여
+ * 데이터베이스의 독립성을 보장합니다.
+ * </p>
  */
 @SpringBootTest
+@Transactional
 class NoticeServiceApplicationTests {
 
     @Autowired

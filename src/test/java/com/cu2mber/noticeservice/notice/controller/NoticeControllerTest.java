@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * 공지사항 컨트롤러의 API 동작을 검증하는 테스트 클래스입니다.
+ * 공지사항 컨트롤러의 API 동작을 검증하는 테스트 클래스
  * MockMvc를 사용하여 HTTP 요청/응답 및 JSON 데이터 구조를 독립적으로 테스트합니다.
  */
 @WebMvcTest(NoticeController.class)
@@ -114,10 +114,8 @@ class NoticeControllerTest {
     @Test
     @DisplayName("존재하지 않는 공지사항 조회 시 404 에러")
     void getNotice_notFound() throws Exception {
-        // given
         given(noticeService.getNotice(999L)).willThrow(new NoticeNotFoundException());
 
-        // when & then
         mockMvc.perform(get("/api/notices/{notice-no}", 999L))
                 .andExpect(status().isNotFound());
     }
