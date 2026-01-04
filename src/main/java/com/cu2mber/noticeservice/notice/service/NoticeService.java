@@ -2,6 +2,7 @@ package com.cu2mber.noticeservice.notice.service;
 
 import com.cu2mber.noticeservice.notice.dto.NoticeRequest;
 import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -22,5 +23,6 @@ public interface NoticeService {
     NoticeResponse getNotice(Long noticeNo);
 
     /** 전체 공지사항 목록 조회 (고정글 우선 정렬) */
-    List<NoticeResponse> getAllNotices();
+    Page<NoticeResponse> getAllNotices(int page, int size, String keyword);
+
 }

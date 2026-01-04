@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 공지사항 생성을 위한 요청 DTO 클래스입니다.
- * * <p>필드 설명:</p>
+ * 공지사항 생성을 위한 요청 DTO 클래스
+ * <p>필드 설명:</p>
  * <ul>
  * <li>isFixed: 클라이언트의 명시적 요청 여부를 확인하기 위해 래퍼 클래스(Boolean)를 사용합니다.
  * 값이 누락될 경우 기본값인 false로 처리되지만, 필요한 경우 @NotNull을 통해

@@ -11,6 +11,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * 애플리케이션 전역에서 발생하는 예외를 중앙 집중식으로 처리하는 핸들러 클래스
+ * <p>
+ * 주요 처리 대상:
+ * <ul>
+ * <li>사용자 정의 비즈니스 예외 (공지사항 미존재, 권한 부족 등)</li>
+ * <li>데이터 유효성 검증 실패 예외 (@Valid)</li>
+ * <li>기타 예측하지 못한 런타임 예외</li>
+ * </ul>
+ * 모든 예외는 {@link ErrorResponse} 객체로 변환되어 클라이언트에게 반환됩니다.
+ * </p>
+ */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

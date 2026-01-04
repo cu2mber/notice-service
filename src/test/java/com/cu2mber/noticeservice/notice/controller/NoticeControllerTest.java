@@ -9,6 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * 공지사항 컨트롤러의 API 동작을 검증하는 테스트 클래스입니다.
+ * MockMvc를 사용하여 HTTP 요청/응답 및 JSON 데이터 구조를 독립적으로 테스트합니다.
+ */
 @WebMvcTest(NoticeController.class)
 class NoticeControllerTest {
 
@@ -115,20 +123,48 @@ class NoticeControllerTest {
     }
 
     @Test
-    @DisplayName(value="모든 공지사항 가져오기 성공")
-    void getAllNotices() throws Exception {
-        List<NoticeResponse> response = List.of(
+    @DisplayName("모든 공지사항 가져오기 성공 - 키워드 없음")
+    void getNotices_WithoutKeyword() throws Exception {
+        List<NoticeResponse> content = List.of(
                 new NoticeResponse(1L, "제목1", "내용", true, "관리자", LocalDateTime.now()),
                 new NoticeResponse(2L, "제목2", "내용", true, "관리자", LocalDateTime.now()));
 
-        given(noticeService.getAllNotices()).willReturn(response);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<NoticeResponse> pageResponse = new PageImpl<>(content, pageable, content.size());
+
+        given(noticeService.getAllNotices(0, 10, null)).willReturn(pageResponse);
 
         mockMvc.perform(get("/api/notices")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].noticeTitle").value("제목1"))
-                .andExpect(jsonPath("$[1].isFixed").value(true));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].noticeTitle").value("제목1"))
+                .andExpect(jsonPath("$.totalPages").value(1));
+    }
+
+    @Test
+    @DisplayName("공지사항 키워드 검색 성공 - 키워드 포함")
+    void getNotices_WithKeyword() throws Exception {
+        String keyword = "안내";
+        List<NoticeResponse> content = List.of(
+                new NoticeResponse(1L, "[점검] 서버 점검 안내", "내용", true, "관리자", LocalDateTime.now()));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<NoticeResponse> pageResponse = new PageImpl<>(content, pageable, content.size());
+
+        given(noticeService.getAllNotices(0, 10, keyword)).willReturn(pageResponse);
+
+        mockMvc.perform(get("/api/notices")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("keyword", keyword)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1)) // 검색 결과가 1개인 상황
+                .andExpect(jsonPath("$.content[0].noticeTitle").value("[점검] 서버 점검 안내"))
+                .andExpect(jsonPath("$.totalElements").value(1));
 
     }
 }

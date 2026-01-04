@@ -8,6 +8,9 @@ import com.cu2mber.noticeservice.notice.dto.NoticeResponse;
 import com.cu2mber.noticeservice.notice.repository.NoticeRepository;
 import com.cu2mber.noticeservice.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,9 +101,17 @@ public class NoticeServiceImpl implements NoticeService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<NoticeResponse> getAllNotices() {
-        return noticeRepository.findAllByOrderByIsFixedDescCreatedAtDesc().stream()
-                .map(NoticeResponse::from)
-                .collect(Collectors.toList());
+    public Page<NoticeResponse> getAllNotices(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Notice> noticePage;
+        if (keyword != null && !keyword.isBlank()) {
+            noticePage = noticeRepository.findByNoticeTitleContaining(keyword, pageable);
+        } else {
+            noticePage = noticeRepository.findAllNoticesWithPaging(pageable);
+        }
+
+        return noticePage.map(NoticeResponse::from);
     }
+
 }

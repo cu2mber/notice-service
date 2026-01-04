@@ -6,13 +6,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 공지사항 정보를 담는 엔티티 클래스
+ * <p>
+ * - AuditingEntityListener: 생성일(createdAt) 자동 기록 활성화
+ * - NoArgsConstructor: 무분별한 객체 생성 방지를 위한 접근 제어(PROTECTED) 적용
+ * </p>
+ */
 @Entity
 @Table(name="notices")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
