@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     /** 제목 검색 + 페이징 (고정글 우선 정렬 유지) */
-    @Query("SELECT n FROM Notice n WHERE n.noticeTitle LIKE %:keyword% " +
-            "ORDER BY n.isFixed DESC, n.createdAt DESC")
+    @Query("SELECT n FROM Notice n WHERE n.noticeTitle LIKE %:keyword%")
     Page<Notice> findByNoticeTitleContaining(String keyword, Pageable pageable);
 
     /**

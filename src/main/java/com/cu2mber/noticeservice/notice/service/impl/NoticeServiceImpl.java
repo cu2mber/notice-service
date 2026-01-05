@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -135,7 +136,13 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     @Transactional(readOnly = true)
     public Page<NoticeResponse> getAllNotices(int page, int size, String keyword) {
-        Pageable pageable = PageRequest.of(page, size);
+        // isFixed로 먼저 내림차순(고정글 우선), 그다음 createdAt으로 내림차순(최신순)
+        Sort sort = Sort.by(
+            Sort.Order.desc("isFixed"),
+            Sort.Order.desc("createdAt")
+        );
+
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Notice> noticePage;
         if (keyword != null && !keyword.isBlank()) {

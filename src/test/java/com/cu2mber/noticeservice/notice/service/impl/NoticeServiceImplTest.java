@@ -202,10 +202,9 @@ class NoticeServiceImplTest {
     @Test
     @DisplayName("공지사항이 하나도 없을 때 빈 페이지 반환")
     void getAllNotices_Empty() {
-        Pageable pageable = PageRequest.of(0, 10);
         String keyword = null;
 
-        when(noticeRepository.findAllNoticesWithPaging(pageable))
+        when(noticeRepository.findAllNoticesWithPaging(any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
 
         Page<NoticeResponse> result = noticeService.getAllNotices(0, 10, keyword);
@@ -215,6 +214,6 @@ class NoticeServiceImplTest {
         assertEquals(0, result.getTotalElements());
 
         log.info("테스트 성공 : 빈 페이지 반환 확인");
-        verify(noticeRepository, times(1)).findAllNoticesWithPaging(pageable);
+        verify(noticeRepository, times(1)).findAllNoticesWithPaging(any(Pageable.class));
     }
 }
